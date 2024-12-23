@@ -3,6 +3,7 @@ pragma solidity ^0.8.23;
 
 import {Test, console} from "forge-std/Test.sol";
 import {OrbiterSite} from "../src/OrbiterSite.sol";
+import {Ownable} from "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
 contract OrbiterSiteTest is Test {
     OrbiterSite public orbiterSite;
@@ -10,7 +11,8 @@ contract OrbiterSiteTest is Test {
     string testCid = "QmTest123";
 
     function setUp() public {
-        orbiterSite = new OrbiterSite(owner);
+        vm.prank(owner);
+        orbiterSite = new OrbiterSite();
         vm.startPrank(owner);
     }
 
@@ -21,13 +23,19 @@ contract OrbiterSiteTest is Test {
 
     function testOnlyOwnerCanSetValue() public {
         vm.stopPrank();
-        vm.startPrank(address(2));
-        vm.expectRevert();
+        vm.prank(address(2));
+        vm.expectRevert(
+            abi.encodeWithSignature(
+                "OwnableUnauthorizedAccount(address)",
+                address(2)
+            )
+        );
         orbiterSite.updateMapping(testCid);
     }
 
     function testEmitsEvent() public {
-        emit IPCM.MappingUpdated(testCid);
+        vm.expectEmit(true, true, true, true);
+        emit OrbiterSite.MappingUpdated(testCid);
         orbiterSite.updateMapping(testCid);
     }
 
