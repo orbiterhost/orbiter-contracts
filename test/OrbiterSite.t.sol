@@ -7,46 +7,56 @@ import {Ownable} from "../lib/openzeppelin-contracts/contracts/access/Ownable.so
 
 contract OrbiterSiteTest is Test {
     OrbiterSite public orbiterSite;
-    address owner = address(1);
-    string testCid = "QmTest123";
+    address user = address(0x1);
 
     function setUp() public {
-        vm.prank(owner);
         orbiterSite = new OrbiterSite();
-        vm.startPrank(owner);
     }
 
-    function testSetValue() public {
-        orbiterSite.updateMapping(testCid);
-        assertEq(orbiterSite.getMapping(), testCid);
+    function testInitialize() public {
+        orbiterSite.initialize(user);
+        assertEq(orbiterSite.owner(), user);
     }
 
-    function testOnlyOwnerCanSetValue() public {
-        vm.stopPrank();
-        vm.prank(address(2));
+    function testCantInitializeTwice() public {
+        orbiterSite.initialize(user);
+        vm.expectRevert("Already initialized");
+        orbiterSite.initialize(user);
+    }
+
+    function testUpdateMapping() public {
+        orbiterSite.initialize(user);
+        vm.prank(user);
+        orbiterSite.updateMapping("newCID");
+        assertEq(orbiterSite.getMapping(), "newCID");
+    }
+
+    function testOnlyOwnerCanUpdateMapping() public {
+        orbiterSite.initialize(user);
+        vm.startPrank(address(0x2));
         vm.expectRevert(
-            abi.encodeWithSignature(
-                "OwnableUnauthorizedAccount(address)",
-                address(2)
+            abi.encodeWithSelector(
+                Ownable.OwnableUnauthorizedAccount.selector,
+                address(0x2)
             )
         );
-        orbiterSite.updateMapping(testCid);
+        orbiterSite.updateMapping("newCID");
+        vm.stopPrank();
     }
 
-    function testEmitsEvent() public {
-        vm.expectEmit(true, true, true, true);
-        emit OrbiterSite.MappingUpdated(testCid);
-        orbiterSite.updateMapping(testCid);
+    function testGetMapping() public {
+        orbiterSite.initialize(user);
+        vm.prank(user);
+        orbiterSite.updateMapping("testCID");
+        assertEq(orbiterSite.getMapping(), "testCID");
     }
 
-    function testGetValue() public {
-        orbiterSite.updateMapping(testCid);
-        string memory initialValue = orbiterSite.getMapping();
-        assertEq(initialValue, testCid);
-
-        string memory newTestCid = "QmTest456";
-        orbiterSite.updateMapping(newTestCid);
-        string memory newValue = orbiterSite.getMapping();
-        assertEq(newValue, newTestCid);
+    function testMappingUpdatedEvent() public {
+        orbiterSite.initialize(user);
+        vm.prank(user);
+        emit MappingUpdated("newCID");
+        orbiterSite.updateMapping("newCID");
     }
+
+    event MappingUpdated(string value);
 }

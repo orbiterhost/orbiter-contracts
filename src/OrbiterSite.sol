@@ -6,8 +6,15 @@ import {Ownable} from "../lib/openzeppelin-contracts/contracts/access/Ownable.so
 
 contract OrbiterSite is Ownable {
     string private cidMapping;
+    bool private initialized;
 
     constructor() Ownable(msg.sender) {}
+
+    function initialize(address owner) external {
+        require(!initialized, "Already initialized");
+        _transferOwnership(owner);
+        initialized = true;
+    }
 
     event MappingUpdated(string value);
 
