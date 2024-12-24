@@ -34,12 +34,7 @@ contract OrbiterSiteTest is Test {
     function testOnlyOwnerCanUpdateMapping() public {
         orbiterSite.initialize(user);
         vm.startPrank(address(0x2));
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Ownable.OwnableUnauthorizedAccount.selector,
-                address(0x2)
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, address(0x2)));
         orbiterSite.updateMapping("newCID");
         vm.stopPrank();
     }
