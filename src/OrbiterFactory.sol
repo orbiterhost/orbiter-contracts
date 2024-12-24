@@ -13,7 +13,7 @@ contract OrbiterFactory {
         implementation = address(new OrbiterSite());
     }
 
-    function createOrbitalSite() external returns (address) {
+    function createOrbiterSite() external returns (address) {
         address clone = Clones.clone(implementation);
         OrbiterSite(clone).initialize(msg.sender);
 
