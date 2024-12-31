@@ -12,7 +12,7 @@ contract OrbiterFactoryTest is Test {
     }
 
     function testCreateSite() public {
-        address site = factory.createHelloBase();
+        address site = factory.createOrbiterSite();
 
         assertNotEq(site, address(0));
         assertNotEq(site, factory.implementation());
@@ -26,8 +26,8 @@ contract OrbiterFactoryTest is Test {
     }
 
     function testCreateMultipleSites() public {
-        address site1 = factory.createHelloBase();
-        address site2 = factory.createHelloBase();
+        address site1 = factory.createOrbiterSite();
+        address site2 = factory.createOrbiterSite();
 
         assertNotEq(site1, site2);
 
