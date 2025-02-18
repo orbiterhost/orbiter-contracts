@@ -1,66 +1,49 @@
-## Foundry
+## Orbiter Contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+![cover](https://orbiter.host/og.png)
 
-Foundry consists of:
+The official repo for Orbiter's smart contracts. This repo contains the following:
+- **OrbiterSite** - Custom implementation of [IPCM](https://ipcm.dev)
+- **OrbiterFactory** - Contract factory that enables easy deployment of OrbiterSite contracts
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Both of these contracts are currently only deployed on [Base](https://base.org) at the following addresses
+| Contract       | Address                                    |
+|----------------|--------------------------------------------|
+| OrbiterSite    | [0x404DA1447568eFe19a02638c6354608d83FbCb43](https://basescan.org/address/0x404DA1447568eFe19a02638c6354608d83FbCb43) |
+| OrbiterFactory | [0x486Edc2E94926fd50398e2129089648b8B9E3D3A](https://basescan.org/address/0x486edc2e94926fd50398e2129089648b8b9e3d3a) |
 
-## Documentation
+## Development
 
-https://book.getfoundry.sh/
+To run these contracts locally first install [Foundry](https://book.getfoundry.sh/getting-started/installation).
 
-## Usage
+Clone the repo and install the dependencies
 
-### Build
-
-```shell
-$ forge build
+```bash
+git clone https://github.com/orbiterhost/orbiter-contracts
+cd orbiter-contracts
+forge install
 ```
 
-### Test
+Compile and run tests
 
-```shell
-$ forge test
+```bash
+forge compile
+forge test
 ```
 
-### Format
+## Deployment
 
-```shell
-$ forge fmt
+Deployement is very simple as it does not have any constructor arguments and just needs the factory to be deployed; the implementation address will be deployed simutaneously
+
+```bash
+forge create src/OrbiterFactory.sol:OrbiterFactory \
+  --rpc-url <RPC_URL> \
+  --account <YOUR_ACCOUNT> \
+  --broadcast
 ```
 
-### Gas Snapshots
+## Contact
 
-```shell
-$ forge snapshot
-```
+If you have questions feel free to reach out!
 
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+[steve@orbiter.host](mailto:steve@orbiter.host)
